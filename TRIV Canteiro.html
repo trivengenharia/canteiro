@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>TRIV Canteiro | Controle de obras do orçamento à entrega</title>
+<style>
+:root{--bg:#000;--bg2:#0a0a0a;--card:#101010;--line:#1f2a22;--tx:#f2f2f2;--mut:#9aa39c;--g:#39ff14;--gd:#1fb80a;--red:#ff5f56;--glow:0 0 22px rgba(57,255,20,.35);color-scheme:dark;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-behavior:smooth;scroll-padding-top:calc(76px + env(safe-area-inset-top,0px))}
+body{margin:0;background:var(--bg);color:var(--tx);font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;line-height:1.6}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:rgba(0,0,0,.92);z-index:90}
+a{color:inherit;text-decoration:none}
+.wrap{max-width:1120px;margin:0 auto;padding:0 20px}
+h1,h2,h3{line-height:1.15;margin:0 0 .5em}
+h1{font-size:clamp(2.1rem,5vw,3.6rem);font-weight:800}h2{font-size:clamp(1.5rem,3vw,2.2rem);font-weight:800}h3{font-size:1.1rem}
+p{margin:0 0 1em;color:var(--mut)}.g{color:var(--g)}small{color:var(--mut)}
+.btn{display:inline-block;border:1px solid var(--g);background:var(--g);color:#000;font:inherit;font-weight:700;padding:11px 22px;border-radius:8px;cursor:pointer;transition:.2s}
+.btn:hover{box-shadow:var(--glow);transform:translateY(-1px)}.btn.o{background:transparent;color:var(--g)}.btn.s{padding:6px 12px;font-size:.85rem}.btn.r{border-color:var(--red);color:var(--red)}
+header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:80;background:rgba(0,0,0,.92);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.nav{display:flex;align-items:center;justify-content:space-between;height:68px;gap:14px}
+.logo{font-weight:900;font-size:1.3rem;display:flex;align-items:center;gap:8px}.logo i{width:13px;height:13px;background:var(--g);transform:rotate(45deg);box-shadow:var(--glow)}
+.links{display:flex;gap:20px;align-items:center;font-size:.95rem}.links a:hover{color:var(--g)}
+@media(max-width:760px){.links .l{display:none}}
+.hero{padding:76px 0 56px;background:radial-gradient(900px 400px at 80% 0,rgba(57,255,20,.12),transparent 60%)}
+.hero .wrap{display:grid;grid-template-columns:1.1fr .9fr;gap:40px;align-items:center}.hero p{font-size:1.15rem;max-width:540px}
+.pill{display:inline-block;color:var(--g);border:1px solid var(--g);border-radius:99px;padding:2px 12px;font-size:.78rem;margin-bottom:12px}
+.mock{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:var(--glow)}
+.kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}
+.kpis div{background:#000;border:1px solid var(--line);border-radius:10px;padding:10px}.kpis small{display:block;font-size:.72rem}.kpis b{color:var(--g);font-size:1.1rem}
+.chart{display:flex;align-items:flex-end;gap:8px;height:110px;border-bottom:1px solid var(--line)}.chart i{flex:1;background:linear-gradient(var(--g),var(--gd));border-radius:4px 4px 0 0}.chart i:nth-child(even){background:#26332a}
+@media(max-width:820px){.hero .wrap{grid-template-columns:1fr}}
+section{padding:68px 0}.alt{background:var(--bg2);border-block:1px solid var(--line)}.head{text-align:center;max-width:680px;margin:0 auto 38px}
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:24px;transition:.2s}.card:hover{border-color:var(--g);box-shadow:var(--glow)}
+.ico{width:42px;height:42px;border-radius:10px;border:1px solid var(--g);color:var(--g);display:grid;place-items:center;font-weight:800;margin-bottom:12px}
+@media(max-width:860px){.cards{grid-template-columns:1fr}}
+.plan{display:flex;flex-direction:column}.plan.hot{border-color:var(--g);box-shadow:var(--glow)}
+.price{font-size:2.3rem;font-weight:800;color:var(--g)}.price small{font-size:.9rem;font-weight:400}
+.plan ul{list-style:none;padding:0;margin:14px 0 20px;flex:1}.plan li{padding:5px 0 5px 26px;position:relative}.plan li::before{content:"✓";position:absolute;left:0;color:var(--g);font-weight:800}
+footer{background:var(--bg2);border-top:1px solid var(--line);padding:36px 0;font-size:.9rem;color:var(--mut)}
+footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between}
+.ov{position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:100;display:none;align-items:center;justify-content:center;padding:20px}.ov.open{display:flex}
+.modal{background:var(--card);border:1px solid var(--g);border-radius:16px;padding:26px;width:100%;max-width:440px;box-shadow:var(--glow);max-height:92vh;overflow:auto}
+label{display:grid;gap:5px;font-size:.82rem;color:var(--mut);margin-bottom:12px}
+input,select,textarea{background:#000;border:1px solid var(--line);color:var(--tx);border-radius:8px;padding:10px;font:inherit;width:100%}
+input:focus,select:focus,textarea:focus{outline:2px solid var(--g);border-color:var(--g)}
+.err{color:var(--red);font-size:.8rem;min-height:1.1em;margin:-4px 0 8px}.note{font-size:.8rem;color:var(--mut)}
+/* sistema */
+#app{display:none;min-height:100vh}
+.bar{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;padding:12px 20px;border-bottom:1px solid var(--line);background:#050505;position:sticky;top:env(safe-area-inset-top,0px);z-index:70}
+.test{background:rgba(57,255,20,.1);border-bottom:1px solid var(--g);color:var(--g);font-size:.82rem;padding:8px 20px;text-align:center}
+.main{max-width:1040px;margin:0 auto;padding:24px 20px 70px}
+.row{display:flex;justify-content:space-between;gap:10px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 14px;margin-bottom:8px;flex-wrap:wrap}
+.row b{color:var(--g)}.clk{cursor:pointer}.clk:hover{border-color:var(--g)}
+.prog{height:9px;background:#1a1a1a;border-radius:99px;overflow:hidden;margin:5px 0 10px}.prog i{display:block;height:100%;background:var(--g);box-shadow:var(--glow)}.prog.w i{background:var(--red);box-shadow:none}
+.tabs{display:flex;gap:6px;margin:16px 0;flex-wrap:wrap}.tabs button{background:transparent;border:1px solid var(--line);color:var(--mut);border-radius:8px;padding:8px 13px;cursor:pointer;font:inherit;font-size:.9rem}.tabs button.on{border-color:var(--g);color:var(--g)}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:10px}
+.frm{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;align-items:end;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:14px}.frm label{margin:0}
+.k{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px}.k small{display:block}.k b{color:var(--g);font-size:1.25rem}.k.w b{color:var(--red)}
+.tw{overflow-x:auto;margin-bottom:14px}.t{width:100%;border-collapse:collapse;min-width:780px}.t th{font-size:.72rem;color:var(--mut);text-align:left;padding:6px}.t td{padding:4px}.t input{padding:6px}
+.badge{display:inline-block;border-radius:99px;padding:1px 10px;font-size:.74rem;border:1px solid var(--g);color:var(--g)}.badge.w{border-color:var(--red);color:var(--red)}.badge.m{border-color:var(--mut);color:var(--mut)}
+.tlr{display:grid;grid-template-columns:160px 1fr;gap:10px;align-items:center;margin-bottom:8px}
+.trk{position:relative;height:30px;background:#0c0c0c;border:1px solid var(--line);border-radius:6px}
+.bp{position:absolute;top:3px;height:10px;border:1px solid var(--g);border-radius:4px}.br{position:absolute;top:16px;height:10px;background:var(--g);border-radius:4px}.br.late{background:var(--red)}.hj{position:absolute;top:0;bottom:0;width:2px;background:#fff;opacity:.45}
+.photos{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px}.photos figure{margin:0;background:var(--card);border:1px solid var(--line);border-radius:10px;overflow:hidden}.photos img{width:100%;height:150px;object-fit:cover;display:block}.photos figcaption{padding:8px 10px;font-size:.82rem;color:var(--mut)}
+.own{border:1px dashed var(--g);border-radius:10px;padding:8px 14px;color:var(--g);font-size:.85rem;margin-bottom:12px}
+@media(max-width:600px){.tlr{grid-template-columns:100px 1fr}}
+.cards.four{grid-template-columns:repeat(auto-fit,minmax(230px,1fr))}
+.ent{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:12px}.ent h4{margin:0 0 6px;color:var(--g)}.ent p{color:var(--tx);margin:0 0 6px;font-size:.92rem}.ent .photos{margin-top:8px}
+.chk{display:flex;gap:8px;align-items:center;font-size:.9rem;color:var(--tx);margin:0 0 8px}.chk input{width:auto}
+.rbox{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:14px}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(24px + env(safe-area-inset-bottom,0px));background:var(--card);border:1px solid var(--g);color:var(--tx);padding:10px 18px;border-radius:10px;z-index:120;box-shadow:var(--glow);max-width:90vw}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+<div id="site">
+<header class="top"><div class="wrap nav">
+ <a href="#" class="logo"><i></i>TRIV <span class="g">Canteiro</span></a>
+ <nav class="links"><a class="l" href="#recursos">Recursos</a><a class="l" href="#planos">Planos</a><a class="btn o s" href="#" id="enter">Entrar</a><a class="btn s" href="#planos">Começar agora</a></nav>
+</div></header>
+
+<section class="hero"><div class="wrap">
+ <div><span class="pill">Assine e use hoje mesmo</span>
+ <h1>Cada obra sob <span class="g">controle</span>, do primeiro tijolo à entrega</h1>
+ <p>Orçamento por etapas, prazos, financeiro, compras e fotos para o proprietário acompanhar. Escolha um plano, crie sua conta e comece agora.</p>
+ <a class="btn" href="#planos">Escolher plano e começar</a></div>
+ <div class="mock" aria-hidden="true"><div class="kpis"><div><small>Orçado</small><b>R$ 1,2 mi</b></div><div><small>Realizado</small><b>R$ 840 mil</b></div><div><small>Avanço</small><b>68%</b></div></div>
+ <div class="chart"><i style="height:30%"></i><i style="height:45%"></i><i style="height:40%"></i><i style="height:62%"></i><i style="height:55%"></i><i style="height:78%"></i><i style="height:90%"></i></div></div>
+</div></section>
+
+<section id="recursos" class="alt"><div class="wrap">
+ <div class="head"><h2>Tudo o que a obra precisa, <span class="g">liberado ao assinar</span></h2></div>
+ <div class="cards">
+  <div class="card"><div class="ico">ET</div><h3>Etapas e orçamento</h3><p>Divida a obra em etapas, defina o valor de cada uma e acompanhe o progresso.</p></div>
+  <div class="card"><div class="ico">PZ</div><h3>Prazos previsto x real</h3><p>Linha do tempo com datas planejadas, datas reais e dias de atraso por etapa.</p></div>
+  <div class="card"><div class="ico">R$</div><h3>Financeiro</h3><p>Gastos por etapa e fornecedor, mais o calendário de pagamentos com vencimentos.</p></div>
+  <div class="card"><div class="ico">CP</div><h3>Compras e pendências</h3><p>Lista de compras com situação e pendências com responsável e prazo.</p></div>
+  <div class="card"><div class="ico">DI</div><h3>Diário de obra</h3><p>Registre clima, equipe, serviços e fotos de cada dia e gere relatórios prontos.</p></div>
+  <div class="card"><div class="ico">PR</div><h3>Visão do proprietário</h3><p>Uma tela simples só com avanço, prazos e fotos, para quem contratou a obra.</p></div>
+ </div>
+</div></section>
+
+<section id="planos"><div class="wrap">
+ <div class="head"><h2>Escolha seu plano e <span class="g">comece agora</span></h2><p>Pague e entre, sem reunião e sem esperar retorno.</p></div>
+ <div class="cards four" id="plans"></div>
+ <p class="note" style="text-align:center;margin-top:18px">Sem engenheiro na obra? O plano Com Engenheiro inclui parecer técnico em até 24 horas a partir de um vídeo.</p>
+</div></section>
+<footer><div class="wrap"><span>© 2026 TRIV Canteiro. Todos os direitos reservados.</span><span>Política de privacidade • Termos de uso</span></div></footer>
+</div>
+
+<div class="ov" id="ov"><div class="modal" id="modal"></div></div>
+<div id="app"></div>
+
+<script>
+// ===== CONFIGURAÇÃO =====
+// checkout: cole o link de pagamento de cada plano (Stripe Payment Link, Mercado Pago, Hotmart etc.). Vazio = modo de teste.
+var CONFIG={
+ checkout:{basico:"",intermediario:"",avancado:"",engenheiro:""},
+ parecer:{email:"triv.engenhar@gmail.com",prazoHoras:24}, // e-mail da equipe de engenharia que recebe os pedidos de parecer
+ plans:[
+  {id:"basico",nome:"Básico",preco:29.9,max:2,feats:["Até 2 obras","Etapas, prazos e financeiro","Diário de obra com fotos e relatórios","Visão do proprietário"]},
+  {id:"intermediario",nome:"Intermediário",preco:49.9,max:4,hot:1,feats:["Até 4 obras","Etapas, prazos e financeiro","Diário de obra com fotos e relatórios","Visão do proprietário"]},
+  {id:"avancado",nome:"Avançado",preco:99.9,max:10,feats:["Até 10 obras","Etapas, prazos e financeiro","Diário de obra com fotos e relatórios","Visão do proprietário"]},
+  {id:"engenheiro",nome:"Com Engenheiro",preco:189.9,max:10,parecer:1,eng:1,feats:["Até 10 obras","Tudo do plano Avançado","Envie vídeos da obra","Parecer de um engenheiro TRIV em até 24 horas"]}
+ ]
+};
+var KEY="triv_canteiro_v2",S={account:null,obras:[]},view={v:"painel"};
+var ETAPAS=["Serviços preliminares","Fundação","Estrutura","Alvenaria","Cobertura","Instalações elétricas","Instalações hidráulicas","Revestimentos","Esquadrias","Pintura e acabamento"];
+var CST=["a comprar","cotando","comprado","entregue"];
+var $=s=>document.querySelector(s);
+var esc=t=>String(t==null?"":t).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+var brl=n=>(Number(n)||0).toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
+var uid=()=>"i"+Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+var td=()=>new Date().toISOString().slice(0,10);
+var days=(a,b)=>Math.round((new Date(b)-new Date(a))/864e5);
+var fd=s=>s?s.split("-").reverse().join("/"):"–";
+var sum=(a,k)=>a.reduce((s,x)=>s+(+x[k]||0),0);
+var find=(l,id)=>l.filter(x=>x.id===id)[0];
+var plan=id=>CONFIG.plans.filter(p=>p.id===id)[0];
+function norm(){(S.obras||[]).forEach(o=>{o.diario=o.diario||[];o.pareceres=o.pareceres||[];if(o.fotos){o.fotos.forEach(f=>o.diario.push({id:uid(),data:f.data||td(),clima:"",equipe:0,serv:f.leg||"Registro fotográfico",ocor:"",fotos:[{id:f.id,src:f.src,leg:f.leg}]}));delete o.fotos}})}
+function load(){try{var r=localStorage.getItem(KEY);if(r)S=JSON.parse(r)}catch(e){}norm()}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S));return true}catch(e){return false}}
+var cur=()=>find(S.obras,view.id);
+// cálculos
+var orc=o=>sum(o.etapas,"orcado"),real=o=>sum(o.gastos,"valor");
+function prog(o){if(!o.etapas.length)return 0;var t=orc(o);return Math.round(t?o.etapas.reduce((s,e)=>s+e.prog*e.orcado,0)/t:sum(o.etapas,"prog")/o.etapas.length)}
+function atraso(e){if(e.prog>=100)return e.rf&&e.pf?Math.max(0,days(e.pf,e.rf)):0;return e.pf&&e.pf<td()?days(e.pf,td()):0}
+function pagos(o){var t=sum(o.parc,"valor");return t?Math.round(sum(o.parc.filter(p=>p.pago),"valor")/t*100):0}
+function alertas(o){var a=[];o.etapas.forEach(e=>{if(atraso(e)>0&&e.prog<100)a.push("Etapa “"+e.nome+"” atrasada "+atraso(e)+" dia(s)")});
+ o.pend.forEach(p=>{if(p.st==="aberta"&&p.prazo&&p.prazo<td())a.push("Pendência vencida: "+p.desc)});
+ o.parc.forEach(p=>{if(!p.pago&&p.venc&&p.venc<td())a.push("Pagamento vencido: "+p.desc+" ("+brl(p.valor)+")")});return a}
+var bar=(p,w)=>'<div class="prog'+(w?' w':'')+'"><i style="width:'+Math.max(0,Math.min(100,p))+'%"></i></div>';
+
+// ---------- site ----------
+$("#plans").innerHTML=CONFIG.plans.map(p=>'<div class="card plan'+(p.hot||p.eng?' hot':'')+'">'+(p.hot?'<span class="pill">Mais escolhido</span>':'')+(p.eng?'<span class="pill">Sem engenheiro próprio?</span>':'')+'<h3>'+esc(p.nome)+'</h3><div class="price">'+brl(p.preco)+'<small>/mês</small></div><ul>'+p.feats.map(f=>"<li>"+esc(f)+"</li>").join("")+'</ul><button class="btn" data-plan="'+p.id+'">Assinar e acessar</button></div>').join("");
+document.addEventListener("click",e=>{var b=e.target.closest("[data-plan]");if(b)openSignup(b.getAttribute("data-plan"))});
+$("#enter").onclick=e=>{e.preventDefault();S.account?enterApp():openLogin()};
+$("#ov").addEventListener("click",e=>{if(e.target.id==="ov")closeModal()});
+function closeModal(){$("#ov").classList.remove("open")}
+function openModal(h){$("#modal").innerHTML=h;$("#ov").classList.add("open")}
+function openSignup(id){
+ var p=plan(id);
+ openModal('<h3>Criar conta • plano '+esc(p.nome)+'</h3><p>'+brl(p.preco)+' por mês, com até '+p.max+' obras.</p><form id="su"><label>Seu nome<input name="nome" required autocomplete="name"></label><label>Empresa<input name="empresa" required autocomplete="organization"></label><label>E-mail<input name="email" type="email" required autocomplete="email"></label><div class="err" id="e1"></div><button class="btn" style="width:100%" type="submit">Continuar para o pagamento</button></form><p class="note" style="margin-top:12px">🔒 Não pedimos dados de cartão aqui: o pagamento ocorre na página segura do provedor.</p>');
+ $("#su").onsubmit=ev=>{ev.preventDefault();var f=ev.target,d={nome:f.nome.value.trim(),empresa:f.empresa.value.trim(),email:f.email.value.trim()};
+  if(!d.nome||!d.empresa||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(d.email)){$("#e1").textContent="Preencha todos os campos com um e-mail válido.";return}
+  S.account={nome:d.nome,empresa:d.empresa,email:d.email,plano:id,pago:false,teste:!CONFIG.checkout[id]};save();
+  if(CONFIG.checkout[id])stepPay(id);else{closeModal();enterApp()}};
+}
+function stepPay(id){
+ openModal('<h3>Finalize o pagamento</h3><p>Abrimos a página segura de pagamento em outra aba. Depois de pagar, volte aqui para acessar o sistema.</p><a class="btn" style="display:block;text-align:center;margin-bottom:10px" href="'+esc(CONFIG.checkout[id])+'" target="_blank" rel="noopener">Pagar agora</a><button class="btn o" style="width:100%" id="paid">Já paguei, acessar o sistema</button>');
+ $("#paid").onclick=()=>{S.account.pago=true;save();closeModal();enterApp()};
+}
+function openLogin(){
+ openModal('<h3>Entrar</h3><p>Informe o e-mail usado na assinatura.</p><form id="lg"><label>E-mail<input name="email" type="email" required></label><div class="err" id="e2"></div><button class="btn" style="width:100%" type="submit">Entrar</button></form>');
+ $("#lg").onsubmit=ev=>{ev.preventDefault();var m=ev.target.email.value.trim().toLowerCase();
+  if(S.account&&S.account.email.toLowerCase()===m){closeModal();enterApp()}else $("#e2").textContent="Nenhuma assinatura encontrada neste navegador. Escolha um plano para começar."};
+}
+
+// ---------- sistema ----------
+function enterApp(){$("#site").style.display="none";$("#app").style.display="block";view={v:"painel"};renderApp();window.scrollTo(0,0)}
+function exitApp(){$("#app").style.display="none";$("#site").style.display="block"}
+function renderApp(){
+ var A=S.account,p=plan(A.plano),o=view.v==="obra"?cur():null;
+ var h='<div class="bar"><div class="logo"><i></i>TRIV <span class="g">Canteiro</span></div><div><small>'+esc(A.empresa)+' • plano '+esc(p.nome)+'</small> <button class="btn o s" data-a="sair">Sair</button></div></div>';
+ if(A.teste)h+='<div class="test">Modo de teste: pagamento ainda não conectado. Defina os links em CONFIG.checkout para cobrar.</div>';
+ h+='<div class="main">'+(o?obraView(o):painelView(p))+'</div>';
+ var y=window.scrollY;$("#app").innerHTML=h;window.scrollTo(0,y);
+}
+function painelView(p){
+ var rl=S.obras.reduce((a,o)=>a+real(o),0),or=S.obras.reduce((a,o)=>a+orc(o),0),av=S.obras.length?Math.round(S.obras.reduce((a,o)=>a+prog(o),0)/S.obras.length):0;
+ var h='<h2>Olá, '+esc(S.account.nome.split(" ")[0])+'</h2><div class="grid2"><div class="k"><small>Obras</small><b>'+S.obras.length+' / '+p.max+'</b></div><div class="k"><small>Orçamento total</small><b>'+brl(or)+'</b></div><div class="k"><small>Realizado</small><b>'+brl(rl)+'</b></div><div class="k"><small>Avanço médio</small><b>'+av+'%</b></div></div>';
+ h+='<h3 style="margin-top:24px">Cadastrar obra</h3><form class="frm" data-f="obra"><label>Nome da obra<input name="nome" required></label><label>Proprietário / cliente<input name="cliente" required></label><label>Endereço<input name="end"></label><label>Área (m²)<input name="area" type="number" min="0" step="0.01"></label><label>Início previsto<input name="ini" type="date"></label><label>Término previsto<input name="fim" type="date"></label><button class="btn" type="submit">Criar obra</button></form><div class="err" id="eo"></div>';
+ h+='<h3>Minhas obras</h3>'+(S.obras.length?S.obras.map(o=>{var a=alertas(o).length,g=real(o),t=orc(o);return'<div class="row clk" data-a="abrir" data-id="'+o.id+'"><div style="flex:1;min-width:220px"><b>'+esc(o.nome)+'</b> <small>• '+esc(o.cliente)+(o.end?" • "+esc(o.end):"")+'</small>'+bar(prog(o))+'<small>Avanço '+prog(o)+'% • '+brl(g)+' de '+brl(t)+' • pagamentos '+pagos(o)+'%</small></div>'+(a?'<span class="badge w">'+a+' alerta(s)</span>':'<span class="badge">Em dia</span>')+'</div>'}).join(""):'<p>Nenhuma obra ainda. Cadastre a primeira acima.</p>');
+ return h;
+}
+var TABS=[["resumo","Resumo"],["etapas","Etapas e orçamento"],["prazos","Prazos"],["fin","Financeiro"],["compras","Compras"],["pend","Pendências"],["fotos","Diário e fotos"],["par","Parecer técnico"],["rel","Relatório"]];
+var OWN=["resumo","prazos","fotos"];
+function obraView(o){
+ var ow=view.owner,tabs=TABS.filter(t=>(!ow||OWN.indexOf(t[0])>-1)&&(t[0]!=="par"||plan(S.account.plano).parecer));
+ if(!tabs.some(t=>t[0]===view.tab))view.tab="resumo";
+ var h='<div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:space-between"><button class="btn o s" data-a="voltar">‹ Painel</button><button class="btn o s" data-a="owner">'+(ow?"Sair da visão do proprietário":"Ver como proprietário")+'</button></div>';
+ h+='<h2 style="margin-top:12px">'+esc(o.nome)+'</h2><p>'+esc(o.cliente)+(o.end?" • "+esc(o.end):"")+(o.area?" • "+esc(o.area)+" m²":"")+' • '+fd(o.ini)+' a '+fd(o.fim)+'</p>';
+ if(ow)h+='<div class="own">Visão do proprietário: somente leitura, sem valores internos de custo.</div>';
+ h+='<div class="tabs">'+tabs.map(t=>'<button data-a="tab" data-t="'+t[0]+'" class="'+(view.tab===t[0]?"on":"")+'">'+t[1]+'</button>').join("")+'</div>';
+ h+=({resumo:resumo,etapas:etapasV,prazos:prazosV,fin:finV,compras:comprasV,pend:pendV,fotos:fotosV,rel:relV,par:parV})[view.tab](o,ow);
+ if(!ow)h+='<p style="margin-top:28px"><button class="btn r s" data-a="delobra" data-id="'+o.id+'">'+(view.cd?"Confirmar exclusão":"Excluir esta obra")+'</button></p>';
+ return h;
+}
+function resumo(o,ow){
+ var g=real(o),t=orc(o),al=alertas(o),h='<div class="grid2"><div class="k"><small>Avanço físico</small><b>'+prog(o)+'%</b></div>';
+ if(!ow)h+='<div class="k"><small>Orçamento</small><b>'+brl(t)+'</b></div><div class="k'+(g>t&&t?' w':'')+'"><small>Realizado</small><b>'+brl(g)+'</b></div><div class="k"><small>Saldo</small><b>'+brl(t-g)+'</b></div>';
+ h+='<div class="k"><small>Pagamentos concluídos</small><b>'+pagos(o)+'%</b></div><div class="k'+(al.length?' w':'')+'"><small>Alertas</small><b>'+al.length+'</b></div></div>';
+ if(al.length)h+=al.map(a=>'<div class="row"><span>⚠ '+esc(a)+'</span></div>').join("");
+ h+='<h3 style="margin-top:20px">Execução por etapa</h3>'+(o.etapas.length?o.etapas.map(e=>'<div class="row" style="display:block"><div style="display:flex;justify-content:space-between"><span>'+esc(e.nome)+'</span><b>'+e.prog+'%</b></div>'+bar(e.prog)+'</div>').join(""):'<p>Cadastre as etapas na aba “Etapas e orçamento”.</p>');
+ if(!ow&&o.etapas.length){h+='<h3 style="margin-top:20px">Orçado x realizado por etapa</h3>'+o.etapas.map(e=>{var x=sum(o.gastos.filter(q=>q.et===e.id),"valor"),p=e.orcado?x/e.orcado*100:(x?100:0);return'<div class="row" style="display:block"><div style="display:flex;justify-content:space-between;flex-wrap:wrap"><span>'+esc(e.nome)+'</span><small>'+brl(x)+' de '+brl(e.orcado)+'</small></div>'+bar(p,x>e.orcado)+'</div>'}).join("")}
+ h+='<h3 style="margin-top:20px">Avanço de pagamentos</h3>'+bar(pagos(o))+'<small>'+pagos(o)+'% do calendário de pagamentos quitado</small>';
+ return h;
+}
+function etapasV(o){
+ var h='';
+ if(!o.etapas.length)h+='<p><button class="btn o" data-a="sug">Adicionar etapas sugeridas</button> <small>ou cadastre as suas abaixo</small></p>';
+ h+='<form class="frm" data-f="etapa"><label>Nova etapa<input name="nome" required></label><label>Valor orçado (R$)<input name="orcado" type="number" min="0" step="0.01"></label><label>Início previsto<input name="pi" type="date"></label><label>Término previsto<input name="pf" type="date"></label><button class="btn" type="submit">Adicionar</button></form>';
+ if(o.etapas.length){
+  h+='<div class="tw"><table class="t"><thead><tr><th>Etapa</th><th>Orçado (R$)</th><th>Prev. início</th><th>Prev. término</th><th>Real início</th><th>Real término</th><th>Progresso %</th><th></th></tr></thead><tbody>'+o.etapas.map(e=>{var c=(k,ty)=>'<td><input data-ch="et" data-id="'+e.id+'" data-k="'+k+'" type="'+ty+'" value="'+esc(e[k])+'"'+(ty==="number"?' min="0" step="'+(k==="prog"?1:.01)+'"'+(k==="prog"?' max="100"':''):'')+'></td>';return'<tr>'+c("nome","text")+c("orcado","number")+c("pi","date")+c("pf","date")+c("ri","date")+c("rf","date")+c("prog","number")+'<td><button class="btn r s" data-a="dele" data-id="'+e.id+'">×</button></td></tr>'}).join("")+'</tbody></table></div><p class="note">Total orçado: <b class="g">'+brl(orc(o))+'</b>. Ao informar progresso, as datas reais são preenchidas automaticamente (você pode corrigi-las).</p>';
+ }
+ return h;
+}
+function prazosV(o){
+ var ds=[];o.etapas.forEach(e=>[e.pi,e.pf,e.ri,e.rf].forEach(x=>x&&ds.push(x)));
+ if(!ds.length)return'<p>Informe as datas das etapas para ver a linha do tempo.</p>';
+ ds.push(td());ds.sort();var a=ds[0],T=Math.max(1,days(a,ds[ds.length-1])),pos=x=>days(a,x)/T*100;
+ var h='<p class="note">Contorno = previsto • Preenchido = real • Linha branca = hoje ('+fd(td())+')</p>';
+ h+=o.etapas.map(e=>{var d=atraso(e),bd=e.prog>=100?(d>0?'<span class="badge w">Concluída com '+d+'d de atraso</span>':'<span class="badge">Concluída</span>'):(d>0?'<span class="badge w">Atrasada '+d+'d</span>':(e.prog>0?'<span class="badge">No prazo</span>':'<span class="badge m">Não iniciada</span>'));
+  var p=e.pi&&e.pf?'<div class="bp" style="left:'+pos(e.pi)+'%;width:'+Math.max(1,pos(e.pf)-pos(e.pi))+'%"></div>':'';
+  var end=e.rf||(e.ri&&e.prog<100?td():e.ri),r=e.ri?'<div class="br'+(d>0?' late':'')+'" style="left:'+pos(e.ri)+'%;width:'+Math.max(1,pos(end)-pos(e.ri))+'%"></div>':'';
+  return'<div class="tlr"><div>'+esc(e.nome)+'<br>'+bd+'</div><div class="trk">'+p+r+'<div class="hj" style="left:'+pos(td())+'%"></div></div></div>'}).join("");
+ return h;
+}
+var etOpts=o=>'<option value="">Sem etapa</option>'+o.etapas.map(e=>'<option value="'+e.id+'">'+esc(e.nome)+'</option>').join("");
+var etNome=(o,id)=>{var e=find(o.etapas,id);return e?e.nome:"Sem etapa"};
+function finV(o){
+ var h='<h3>Gastos realizados</h3><form class="frm" data-f="gasto"><label>Descrição<input name="desc" required></label><label>Etapa<select name="et">'+etOpts(o)+'</select></label><label>Fornecedor<input name="forn"></label><label>Valor (R$)<input name="valor" type="number" min="0.01" step="0.01" required></label><label>Data<input name="data" type="date" value="'+td()+'" required></label><button class="btn" type="submit">Lançar</button></form>';
+ h+=o.gastos.length?o.gastos.slice().reverse().map(g=>'<div class="row"><span>'+esc(g.desc)+' <small>• '+esc(etNome(o,g.et))+(g.forn?' • '+esc(g.forn):'')+' • '+fd(g.data)+'</small></span><span><b>'+brl(g.valor)+'</b> <button class="btn r s" data-a="delg" data-id="'+g.id+'">×</button></span></div>').join(""):'<p>Nenhum gasto lançado.</p>';
+ h+='<h3 style="margin-top:24px">Calendário de pagamentos</h3><form class="frm" data-f="parc"><label>Descrição<input name="desc" required></label><label>Valor (R$)<input name="valor" type="number" min="0.01" step="0.01" required></label><label>Vencimento<input name="venc" type="date" required></label><button class="btn" type="submit">Programar</button></form>';
+ h+=o.parc.length?o.parc.slice().sort((a,b)=>a.venc<b.venc?-1:1).map(p=>{var st=p.pago?'<span class="badge">Pago</span>':(p.venc<td()?'<span class="badge w">Vencida</span>':'<span class="badge m">A vencer</span>');return'<div class="row"><span>'+esc(p.desc)+' <small>• vence '+fd(p.venc)+'</small> '+st+'</span><span><b>'+brl(p.valor)+'</b> <button class="btn o s" data-a="pagar" data-id="'+p.id+'">'+(p.pago?"Desfazer":"Marcar pago")+'</button> <button class="btn r s" data-a="delp" data-id="'+p.id+'">×</button></span></div>'}).join(""):'<p>Nenhum pagamento programado.</p>';
+ return h;
+}
+function comprasV(o){
+ var h='<form class="frm" data-f="compra"><label>Item<input name="prod" required></label><label>Quantidade<input name="qtd" placeholder="ex.: 40 sacos"></label><label>Etapa<select name="et">'+etOpts(o)+'</select></label><button class="btn" type="submit">Adicionar à lista</button></form>';
+ h+=o.compras.length?o.compras.map(c=>'<div class="row"><span>'+esc(c.item)+' <small>• '+esc(c.qtd)+' • '+esc(etNome(o,c.et))+'</small></span><span><select data-ch="cst" data-id="'+c.id+'" style="width:auto">'+CST.map(s=>'<option'+(c.st===s?' selected':'')+'>'+s+'</option>').join("")+'</select> <button class="btn r s" data-a="delc" data-id="'+c.id+'">×</button></span></div>').join(""):'<p>Lista de compras vazia.</p>';
+ return h;
+}
+function pendV(o){
+ var h='<form class="frm" data-f="pend"><label>Pendência<input name="desc" required></label><label>Responsável<input name="resp"></label><label>Prazo<input name="prazo" type="date"></label><button class="btn" type="submit">Registrar</button></form>';
+ h+=o.pend.length?o.pend.map(p=>{var late=p.st==="aberta"&&p.prazo&&p.prazo<td(),st=p.st==="resolvida"?'<span class="badge">Resolvida</span>':(late?'<span class="badge w">Atrasada</span>':'<span class="badge m">Aberta</span>');return'<div class="row"><span>'+esc(p.desc)+' <small>• '+esc(p.resp||"sem responsável")+' • prazo '+fd(p.prazo)+'</small> '+st+'</span><span><button class="btn o s" data-a="resolver" data-id="'+p.id+'">'+(p.st==="resolvida"?"Reabrir":"Resolver")+'</button> <button class="btn r s" data-a="delpe" data-id="'+p.id+'">×</button></span></div>'}).join(""):'<p>Nenhuma pendência registrada.</p>';
+ return h;
+}
+var nFotos=o=>o.diario.reduce((s,d)=>s+d.fotos.length,0);
+function fotosV(o,ow){
+ var h='';
+ if(!ow)h+='<h3>Registrar o dia</h3><form class="frm" data-f="dia"><label>Data<input name="data" type="date" value="'+td()+'" required></label><label>Clima<select name="clima"><option>Ensolarado</option><option>Nublado</option><option>Chuvoso</option></select></label><label>Pessoas na obra<input name="equipe" type="number" min="0"></label><label style="grid-column:1/-1">Serviços executados<textarea name="serv" rows="2" required></textarea></label><label style="grid-column:1/-1">Ocorrências (opcional)<textarea name="ocor" rows="2"></textarea></label><label>Fotos (pode escolher várias)<input name="arq" type="file" accept="image/*" multiple></label><label>Legenda das fotos<input name="leg"></label><button class="btn" type="submit">Salvar registro</button></form><p class="note">'+nFotos(o)+' de 24 fotos usadas nesta obra.</p>';
+ h+='<div class="rbox"><h3>Relatório do diário de obra</h3><div class="grid2"><label>De<input type="date" id="rd1"></label><label>Até<input type="date" id="rd2"></label></div><button class="btn" data-a="reld">Gerar relatório do diário</button> <small>Deixe as datas vazias para incluir todo o período.</small></div>';
+ h+=o.diario.length?o.diario.slice().sort((a,b)=>a.data<b.data?1:-1).map(d=>'<div class="ent"><h4>'+fd(d.data)+' • '+esc(d.clima||"–")+' • '+(+d.equipe||0)+' pessoa(s)</h4><p><b>Serviços:</b> '+esc(d.serv)+'</p>'+(d.ocor?'<p><b>Ocorrências:</b> '+esc(d.ocor)+'</p>':'')+(d.fotos.length?'<div class="photos">'+d.fotos.map(f=>'<figure><img src="'+f.src+'" alt="'+esc(f.leg||"Foto da obra")+'">'+(f.leg?'<figcaption>'+esc(f.leg)+'</figcaption>':'')+'</figure>').join("")+'</div>':'')+(ow?'':'<p style="margin-top:8px"><button class="btn r s" data-a="deld" data-id="'+d.id+'">Excluir registro</button></p>')+'</div>').join(""):'<p>Nenhum registro no diário ainda.</p>';
+ return h;
+}
+function relV(o){
+ return'<div class="rbox"><h3>Relatório completo da obra</h3><p>Documento organizado com resumo, etapas e prazos, financeiro, compras, pendências e diário de obra com fotos. Abra o arquivo e use “Imprimir / salvar em PDF”.</p><label class="chk"><input type="checkbox" id="rf1" checked> Incluir valores financeiros</label><label class="chk"><input type="checkbox" id="rf2" checked> Incluir diário de obra com fotos</label><button class="btn" data-a="rel">Gerar relatório completo</button></div><div class="rbox"><h3>Planilha</h3><p>Dados em CSV para abrir no Excel.</p><button class="btn o" data-a="csv">Baixar planilha (CSV)</button></div>';
+}
+function parV(o){
+ var P=CONFIG.parecer,h='<div class="own" style="border-style:solid">Envie um vídeo da obra e receba o parecer de um engenheiro TRIV em até '+P.prazoHoras+' horas.</div>';
+ h+='<form class="frm" data-f="par"><label>Assunto<input name="assunto" required placeholder="ex.: fissura na laje"></label><label>Etapa relacionada<select name="et">'+etOpts(o)+'</select></label><label style="grid-column:1/-1">Descreva a dúvida<textarea name="desc" rows="3" required></textarea></label><label style="grid-column:1/-1">Link do vídeo (opcional se você anexar o arquivo no e-mail)<input name="link" type="url" placeholder="https://"></label><button class="btn" type="submit">Enviar por e-mail</button></form><p class="note">Ao enviar, abrimos o seu e-mail já preenchido para <b class="g">'+esc(P.email)+'</b>. Anexe o vídeo nele ou cole o link acima. Para vídeos grandes, prefira o link (Google Drive, YouTube não listado etc.).</p>';
+ h+=o.pareceres.length?o.pareceres.slice().reverse().map(p=>{var lim=Date.parse(p.criado)+P.prazoHoras*36e5,late=p.st!=="respondido"&&Date.now()>lim,st=p.st==="respondido"?'<span class="badge">Respondido</span>':(late?'<span class="badge w">Prazo de '+P.prazoHoras+'h vencido</span>':'<span class="badge m">Aguardando parecer</span>');
+  return'<div class="ent"><h4>'+esc(p.assunto)+' '+st+'</h4><p><small>Enviado em '+fdt(p.criado)+' • resposta prevista até '+fdt(new Date(lim).toISOString())+' • '+esc(etNome(o,p.et))+'</small></p><p>'+esc(p.desc)+'</p>'+(p.link?'<p><small>Vídeo: '+esc(p.link)+'</small></p>':'')+'<label>Parecer do engenheiro (cole aqui a resposta recebida)<textarea rows="3" data-ch="parr" data-id="'+p.id+'">'+esc(p.resp)+'</textarea></label><p class="note">Se o e-mail não abriu, envie para '+esc(P.email)+' com o vídeo e a ficha do pedido.</p><button class="btn o s" data-a="ficha" data-id="'+p.id+'">Baixar ficha do pedido</button> <button class="btn o s" data-a="parok" data-id="'+p.id+'">'+(p.st==="respondido"?"Reabrir":"Marcar como respondido")+'</button> <button class="btn r s" data-a="delpar" data-id="'+p.id+'">×</button></div>'}).join(""):'<p>Nenhuma solicitação enviada.</p>';
+ return h;
+}
+// ---------- relatórios (HTML autônomo, com fotos) ----------
+var REPCSS='<style>*{-webkit-print-color-adjust:exact;print-color-adjust:exact}body{margin:0;background:#000;color:#eee;font:14px/1.5 Arial,Helvetica,sans-serif}.pg{max-width:900px;margin:0 auto;padding:24px}.hd{border-bottom:3px solid #39ff14;padding-bottom:12px;margin-bottom:18px}.hd>b{font-size:22px}.hd>b span{color:#39ff14}h1{font-size:24px;margin:8px 0 2px}h2{font-size:15px;color:#39ff14;border-bottom:1px solid #1f2a22;padding-bottom:4px;margin:26px 0 10px;text-transform:uppercase;letter-spacing:1px}.kp{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.kp div{border:1px solid #1f2a22;border-radius:8px;padding:8px}.kp small{display:block;color:#9aa39c}.kp b{font-size:17px;color:#39ff14}table{width:100%;border-collapse:collapse;font-size:12px;margin-bottom:8px}th{text-align:left;color:#9aa39c;border-bottom:1px solid #39ff14;padding:5px}td{padding:5px;border-bottom:1px solid #1f2a22;vertical-align:top}.r{text-align:right}.b{height:8px;background:#1a1a1a;border-radius:9px;min-width:70px}.b i{display:block;height:100%;background:#39ff14;border-radius:9px}.b.w i{background:#ff5f56}.ent{border:1px solid #1f2a22;border-radius:8px;padding:10px;margin-bottom:12px;break-inside:avoid}.ent h3{margin:0 0 6px;font-size:14px;color:#39ff14}.ent p{margin:3px 0}.ph{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:8px}.ph img{width:100%;height:150px;object-fit:cover;border-radius:4px}.ph span{display:block;font-size:10px;color:#9aa39c}.al{color:#ff5f56}.pr{margin:16px 0}.pr button{background:#39ff14;border:0;padding:9px 16px;font-weight:700;border-radius:6px;cursor:pointer}.ft{margin-top:30px;border-top:1px solid #1f2a22;padding-top:8px;font-size:11px;color:#9aa39c}@media print{body{background:#fff;color:#111}.pr{display:none}h2,.ent h3,.hd>b span,.kp b{color:#0a7d00}.hd,th{border-color:#0a7d00}td,.ent,.kp div,h2{border-color:#ccc}.b{background:#ddd}.b i{background:#0a7d00}.b.w i,.al{background:none;color:#c00}.b.w i{background:#c00}th,.kp small,.ph span,.ft{color:#555}@page{margin:14mm}}</style>';
+function tbl(head,rows,rc){rc=rc||[];return'<table><thead><tr>'+head.map((x,i)=>'<th'+(rc.indexOf(i)>-1?' class="r"':'')+'>'+x+'</th>').join("")+'</tr></thead><tbody>'+(rows.length?rows.map(r=>'<tr>'+r.map((c,i)=>'<td'+(rc.indexOf(i)>-1?' class="r"':'')+'>'+c+'</td>').join("")+'</tr>').join(""):'<tr><td colspan="'+head.length+'">Sem registros.</td></tr>')+'</tbody></table>'}
+function entHTML(l){return l.length?l.map(d=>'<div class="ent"><h3>'+fd(d.data)+' • '+esc(d.clima||"–")+' • '+(+d.equipe||0)+' pessoa(s) na obra</h3><p><b>Serviços executados:</b> '+esc(d.serv)+'</p>'+(d.ocor?'<p class="al"><b>Ocorrências:</b> '+esc(d.ocor)+'</p>':'')+(d.fotos.length?'<div class="ph">'+d.fotos.map(f=>'<div><img src="'+f.src+'" alt="">'+(f.leg?'<span>'+esc(f.leg)+'</span>':'')+'</div>').join("")+'</div>':'')+'</div>').join(""):'<p>Nenhum registro no período.</p>'}
+function docR(o,titulo,corpo){return'<!DOCTYPE html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>'+esc(titulo+" - "+o.nome)+'</title>'+REPCSS+'</head><body><div class="pg"><div class="hd"><b>TRIV <span>Canteiro</span></b><h1>'+esc(titulo)+'</h1><div>'+esc(o.nome)+' • Proprietário: '+esc(o.cliente)+(o.end?' • '+esc(o.end):'')+(o.area?' • '+esc(o.area)+' m²':'')+'</div><div style="color:#9aa39c;font-size:12px">Emitido em '+fd(td())+' por '+esc(S.account.empresa)+'</div></div><div class="pr"><button onclick="window.print()">Imprimir / salvar em PDF</button></div>'+corpo+'<div class="ft">Relatório gerado pela TRIV Canteiro.</div></div></body></html>'}
+function repCompleto(o,fin,dia){
+ var g=real(o),t=orc(o),al=alertas(o);
+ var b='<h2>Resumo da obra</h2><div class="kp"><div><small>Avanço físico</small><b>'+prog(o)+'%</b></div>'+(fin?'<div><small>Orçamento</small><b>'+brl(t)+'</b></div><div><small>Realizado</small><b>'+brl(g)+'</b></div><div><small>Saldo</small><b>'+brl(t-g)+'</b></div>':'')+'<div><small>Pagamentos quitados</small><b>'+pagos(o)+'%</b></div><div><small>Alertas</small><b>'+al.length+'</b></div></div>'+(al.length?'<ul class="al">'+al.map(a=>'<li>'+esc(a)+'</li>').join("")+'</ul>':'');
+ b+='<h2>Etapas e prazos</h2>'+tbl(["Etapa"].concat(fin?["Orçado","Realizado"]:[],["Progresso","Previsto","Real","Situação"]),o.etapas.map(e=>{var d=atraso(e),sit=e.prog>=100?(d>0?"Concluída com "+d+"d de atraso":"Concluída"):(d>0?"Atrasada "+d+"d":(e.prog>0?"No prazo":"Não iniciada"));
+  return[esc(e.nome)].concat(fin?[brl(e.orcado),brl(sum(o.gastos.filter(q=>q.et===e.id),"valor"))]:[],['<div class="b'+(d>0&&e.prog<100?' w':'')+'"><i style="width:'+e.prog+'%"></i></div>'+e.prog+'%',fd(e.pi)+" a "+fd(e.pf),fd(e.ri)+" a "+fd(e.rf),sit])}),fin?[1,2]:[]);
+ if(fin){
+  b+='<h2>Gastos realizados</h2>'+tbl(["Data","Descrição","Etapa","Fornecedor","Valor"],o.gastos.slice().sort((a,c)=>a.data<c.data?-1:1).map(x=>[fd(x.data),esc(x.desc),esc(etNome(o,x.et)),esc(x.forn),brl(x.valor)]),[4])+'<p class="r"><b>Total: '+brl(g)+'</b></p>';
+  b+='<h2>Calendário de pagamentos</h2>'+tbl(["Vencimento","Descrição","Valor","Situação"],o.parc.slice().sort((a,c)=>a.venc<c.venc?-1:1).map(x=>[fd(x.venc),esc(x.desc),brl(x.valor),x.pago?"Pago":(x.venc<td()?"Vencida":"A vencer")]),[2]);
+ }
+ b+='<h2>Compras</h2>'+tbl(["Item","Quantidade","Etapa","Situação"],o.compras.map(c=>[esc(c.item),esc(c.qtd),esc(etNome(o,c.et)),esc(c.st)]));
+ b+='<h2>Pendências</h2>'+tbl(["Descrição","Responsável","Prazo","Situação"],o.pend.map(p=>[esc(p.desc),esc(p.resp),fd(p.prazo),p.st==="resolvida"?"Resolvida":(p.prazo&&p.prazo<td()?"Atrasada":"Aberta")]));
+ if(dia)b+='<h2>Diário de obra</h2>'+entHTML(o.diario.slice().sort((a,c)=>a.data<c.data?-1:1));
+ return b;
+}
+function repPedido(o,r){
+ var P=CONFIG.parecer,e=find(o.etapas,r.et),lim=new Date(Date.parse(r.criado)+P.prazoHoras*36e5).toISOString(),al=alertas(o);
+ var b='<h2>Pedido de parecer</h2><div class="kp"><div><small>Assunto</small><b style="font-size:14px">'+esc(r.assunto)+'</b></div><div><small>Enviado em</small><b>'+fdt(r.criado)+'</b></div><div><small>Resposta até ('+P.prazoHoras+'h)</small><b>'+fdt(lim)+'</b></div></div>';
+ b+='<h2>Descrição da dúvida</h2><p>'+esc(r.desc).replace(/\n/g,"<br>")+'</p><p><b>Vídeo:</b> '+(r.link?esc(r.link):"enviado como anexo no e-mail")+'</p>';
+ b+='<h2>Cliente</h2>'+tbl(["Nome","Empresa","E-mail"],[[esc(S.account.nome),esc(S.account.empresa),esc(S.account.email)]]);
+ b+='<h2>Situação da obra</h2><div class="kp"><div><small>Avanço físico</small><b>'+prog(o)+'%</b></div><div><small>Etapa relacionada</small><b style="font-size:14px">'+esc(e?e.nome:"Sem etapa")+'</b></div><div><small>Progresso da etapa</small><b>'+(e?e.prog+"%":"–")+'</b></div></div>'+(al.length?'<ul class="al">'+al.map(a=>'<li>'+esc(a)+'</li>').join("")+'</ul>':'');
+ b+='<h2>Últimos registros do diário</h2>'+entHTML(o.diario.slice().sort((a,c)=>a.data<c.data?1:-1).slice(0,3).reverse());
+ return b;
+}
+function repDiario(o,de,ate){
+ var l=o.diario.filter(d=>(!de||d.data>=de)&&(!ate||d.data<=ate)).sort((a,c)=>a.data<c.data?-1:1);
+ return'<h2>Período</h2><p>'+(de?fd(de):"início")+' a '+(ate?fd(ate):"hoje")+'</p><div class="kp"><div><small>Dias registrados</small><b>'+l.length+'</b></div><div><small>Fotos</small><b>'+l.reduce((s,d)=>s+d.fotos.length,0)+'</b></div><div><small>Ocorrências</small><b>'+l.filter(d=>d.ocor).length+'</b></div></div><h2>Registros</h2>'+entHTML(l);
+}
+function csv(o){
+ var L=[["Obra",o.nome],["Cliente",o.cliente],["Endereço",o.end],["Início previsto",fd(o.ini)],["Término previsto",fd(o.fim)],["Orçamento",orc(o)],["Realizado",real(o)],["Avanço físico %",prog(o)],[],
+ ["ETAPAS"],["Etapa","Orçado","Prev. início","Prev. término","Real início","Real término","Progresso %","Atraso (dias)"]].concat(o.etapas.map(e=>[e.nome,e.orcado,fd(e.pi),fd(e.pf),fd(e.ri),fd(e.rf),e.prog,atraso(e)]),
+ [[],["GASTOS"],["Descrição","Etapa","Fornecedor","Valor","Data"]],o.gastos.map(g=>[g.desc,etNome(o,g.et),g.forn,g.valor,fd(g.data)]),
+ [[],["PAGAMENTOS"],["Descrição","Valor","Vencimento","Situação"]],o.parc.map(p=>[p.desc,p.valor,fd(p.venc),p.pago?"Pago":"Em aberto"]),
+ [[],["COMPRAS"],["Item","Quantidade","Etapa","Situação"]],o.compras.map(c=>[c.item,c.qtd,etNome(o,c.et),c.st]),
+ [[],["PENDÊNCIAS"],["Descrição","Responsável","Prazo","Situação"]],o.pend.map(p=>[p.desc,p.resp,fd(p.prazo),p.st]));
+ return"\ufeff"+L.reduce((a,x)=>Array.isArray(x[0])?a.concat(x):a.concat([x]),[]).map(r=>r.map(c=>'"'+String(c==null?"":c).replace(/"/g,'""')+'"').join(";")).join("\n");
+}
+var slug=t=>t.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"")||"obra";
+var fdt=iso=>new Date(iso).toLocaleString("pt-BR",{day:"2-digit",month:"2-digit",hour:"2-digit",minute:"2-digit"});
+function toast(m){var t=document.createElement("div");t.className="toast";t.textContent=m;document.body.appendChild(t);setTimeout(()=>t.remove(),4500)}
+function baixar(nome,conteudo,mime){
+ var d=window.claude&&claude.use?claude.use("downloads"):Promise.resolve(null);
+ d.then(x=>{if(!x){toast("Download indisponível neste ambiente.");return}x.save({filename:nome,data:new Blob([conteudo],{type:mime||"text/html;charset=utf-8"})}).catch(()=>{})});
+}
+var shrink=file=>new Promise(res=>{var r=new FileReader();r.onload=()=>{var im=new Image();im.onload=()=>{var k=Math.min(1,800/Math.max(im.width,im.height)),c=document.createElement("canvas");c.width=im.width*k;c.height=im.height*k;c.getContext("2d").drawImage(im,0,0,c.width,c.height);res(c.toDataURL("image/jpeg",.6))};im.onerror=()=>res(null);im.src=r.result};r.readAsDataURL(file)});
+// ---------- eventos ----------
+document.addEventListener("click",e=>{
+ var b=e.target.closest("[data-a]");if(!b)return;var a=b.getAttribute("data-a"),id=b.getAttribute("data-id"),o=view.v==="obra"?cur():null;
+ if(a==="sair"){exitApp();return}
+ if(a==="abrir"){view={v:"obra",id:id,tab:"resumo"}}
+ else if(a==="voltar"){view={v:"painel"}}
+ else if(a==="tab"){view.tab=b.getAttribute("data-t");view.cd=false}
+ else if(a==="owner"){view.owner=!view.owner}
+ else if(a==="csv"){baixar("planilha-"+slug(o.nome)+".csv",csv(o),"text/csv;charset=utf-8");return}
+ else if(a==="rel"){baixar("relatorio-"+slug(o.nome)+".html",docR(o,"Relatório da obra",repCompleto(o,$("#rf1").checked,$("#rf2").checked)));return}
+ else if(a==="reld"){baixar("diario-de-obra-"+slug(o.nome)+".html",docR(o,"Relatório do diário de obra",repDiario(o,$("#rd1").value,$("#rd2").value)));return}
+ else if(a==="delobra"){if(!view.cd){view.cd=true;renderApp();return}S.obras=S.obras.filter(x=>x.id!==id);view={v:"painel"}}
+ else if(a==="sug"){ETAPAS.forEach(n=>o.etapas.push({id:uid(),nome:n,orcado:0,pi:"",pf:"",ri:"",rf:"",prog:0}))}
+ else if(a==="dele"){o.etapas=o.etapas.filter(x=>x.id!==id);o.gastos.forEach(g=>{if(g.et===id)g.et=""})}
+ else if(a==="delg")o.gastos=o.gastos.filter(x=>x.id!==id);
+ else if(a==="delp")o.parc=o.parc.filter(x=>x.id!==id);
+ else if(a==="delc")o.compras=o.compras.filter(x=>x.id!==id);
+ else if(a==="delpe")o.pend=o.pend.filter(x=>x.id!==id);
+ else if(a==="deld")o.diario=o.diario.filter(x=>x.id!==id);
+ else if(a==="ficha"){var pr=find(o.pareceres,id);baixar("pedido-parecer-"+slug(o.nome)+".html",docR(o,"Solicitação de parecer técnico",repPedido(o,pr)));return}
+ else if(a==="parok"){var pz=find(o.pareceres,id);pz.st=pz.st==="respondido"?"enviado":"respondido"}
+ else if(a==="delpar")o.pareceres=o.pareceres.filter(x=>x.id!==id);
+ else if(a==="pagar"){var p=find(o.parc,id);p.pago=!p.pago}
+ else if(a==="resolver"){var q=find(o.pend,id);q.st=q.st==="resolvida"?"aberta":"resolvida"}
+ else return;
+ save();renderApp();
+});
+document.addEventListener("change",e=>{
+ var t=e.target,c=t.dataset.ch;if(!c)return;var o=cur();
+ if(c==="et"){var x=find(o.etapas,t.dataset.id),k=t.dataset.k;x[k]=t.type==="number"?(+t.value||0):t.value;
+  if(k==="prog"){x.prog=Math.max(0,Math.min(100,x.prog));if(x.prog>0&&!x.ri)x.ri=td();if(x.prog>=100&&!x.rf)x.rf=td();if(x.prog<100)x.rf=x.rf&&x.prog<100?"":x.rf}}
+ else if(c==="cst")find(o.compras,t.dataset.id).st=t.value;
+ else if(c==="parr")find(o.pareceres,t.dataset.id).resp=t.value;
+ save();renderApp();
+});
+document.addEventListener("submit",e=>{
+ var f=e.target,k=f.dataset.f;if(!k)return;e.preventDefault();var o=cur(),v=n=>{var x=f.querySelector('[name="'+n+'"]');return x?x.value.trim():""};
+ if(k==="obra"){var p=plan(S.account.plano);if(S.obras.length>=p.max){$("#eo").textContent="Limite de "+p.max+" obras do plano "+p.nome+" atingido.";return}
+  S.obras.push({id:uid(),nome:v("nome"),cliente:v("cliente"),end:v("end"),area:v("area"),ini:v("ini"),fim:v("fim"),etapas:[],gastos:[],parc:[],compras:[],pend:[],diario:[],pareceres:[]})}
+ else if(k==="etapa")o.etapas.push({id:uid(),nome:v("nome"),orcado:+v("orcado")||0,pi:v("pi"),pf:v("pf"),ri:"",rf:"",prog:0});
+ else if(k==="gasto")o.gastos.push({id:uid(),desc:v("desc"),et:v("et"),forn:v("forn"),valor:+v("valor"),data:v("data")});
+ else if(k==="parc")o.parc.push({id:uid(),desc:v("desc"),valor:+v("valor"),venc:v("venc"),pago:false});
+ else if(k==="compra")o.compras.push({id:uid(),item:v("prod"),qtd:v("qtd"),et:v("et"),st:"a comprar"});
+ else if(k==="pend")o.pend.push({id:uid(),desc:v("desc"),resp:v("resp"),prazo:v("prazo"),st:"aberta"});
+ else if(k==="dia"){
+  var fl=Array.from(f.querySelector('[name="arq"]').files),leg=v("leg");
+  if(nFotos(o)+fl.length>24){toast("Limite de 24 fotos por obra. Exclua registros antigos ou envie menos arquivos.");return}
+  Promise.all(fl.map(shrink)).then(src=>{o.diario.push({id:uid(),data:v("data"),clima:v("clima"),equipe:+v("equipe")||0,serv:v("serv"),ocor:v("ocor"),fotos:src.filter(Boolean).map(x=>({id:uid(),src:x,leg:leg}))});
+   if(!save()){o.diario.pop();toast("Sem espaço no navegador para essas fotos.")}renderApp()});return}
+ else if(k==="par"){
+  var P=CONFIG.parecer;
+  if(!plan(S.account.plano).parecer)return;
+  var r={id:uid(),assunto:v("assunto"),et:v("et"),desc:v("desc"),link:v("link"),criado:new Date().toISOString(),st:"enviado",resp:""};o.pareceres.push(r);save();renderApp();
+  var txt="SOLICITAÇÃO DE PARECER TÉCNICO (resposta em até "+P.prazoHoras+"h)\n\nCLIENTE\nNome: "+S.account.nome+"\nEmpresa: "+S.account.empresa+"\nE-mail: "+S.account.email+"\n\nOBRA\nNome: "+o.nome+"\nProprietário: "+o.cliente+"\nEndereço: "+(o.end||"–")+"\nEtapa relacionada: "+etNome(o,r.et)+"\n\nASSUNTO\n"+r.assunto+"\n\nDESCRIÇÃO\n"+r.desc.slice(0,1200)+"\n\nVÍDEO\n"+(r.link||"anexado neste e-mail")+"\n\n(Se possível, anexe também a ficha do pedido baixada na plataforma.)";
+  window.open("mailto:"+P.email+"?subject="+encodeURIComponent("Parecer técnico: "+r.assunto+" - "+o.nome)+"&body="+encodeURIComponent(txt),"_blank","noopener");
+  toast("Abrimos o seu e-mail. Anexe o vídeo e envie. Se não abrir, escreva para "+P.email+".");return}
+ save();renderApp();
+});
+load();
+</script>
+</body>
+</html>

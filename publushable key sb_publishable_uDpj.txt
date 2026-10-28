@@ -1,0 +1,3 @@
+publushable key: sb_publishable_uDpj_-Iy5pLZmBs3gM4jBA__OsCdD7t
+
+api url: https://ucqeanulefwiorrhzdty.supabase.co/rest/v1/
